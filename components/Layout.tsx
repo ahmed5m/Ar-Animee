@@ -212,7 +212,7 @@ export const Layout = () => {
                 )}
             </div>
 
-            {user ? (
+            {user && (
               <div className="relative group">
                 <div className="flex items-center gap-2 cursor-pointer">
                   <div className="w-8 h-8 md:w-9 md:h-9 rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-sm font-bold shadow-lg ring-2 ring-transparent group-hover:ring-white/20 transition-all">
@@ -240,10 +240,6 @@ export const Layout = () => {
                   </div>
                 </div>
               </div>
-            ) : (
-              <Link to="/login" className="bg-primary hover:bg-red-700 text-white px-4 py-2 rounded-full text-xs md:text-sm font-bold transition shadow-lg hover:shadow-red-900/20 whitespace-nowrap">
-                تسجيل دخول
-              </Link>
             )}
           </div>
         </div>
@@ -284,7 +280,7 @@ export const Layout = () => {
                     
                     <div className="my-8"></div>
 
-                    {user ? (
+                    {user && (
                         <div className="bg-white/5 rounded-2xl p-5 border border-white/10">
                              <div className="flex items-center gap-4 mb-6">
                                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-xl font-bold">
@@ -307,10 +303,6 @@ export const Layout = () => {
                                 <LogOut size={18} /> خروج
                              </button>
                         </div>
-                    ) : (
-                         <Link to="/login" className="block w-full text-center bg-primary text-white py-4 rounded-xl font-bold text-lg shadow-lg shadow-primary/20" onClick={() => setMobileMenuOpen(false)}>
-                            تسجيل الدخول / إنشاء حساب
-                         </Link>
                     )}
                 </div>
             </div>

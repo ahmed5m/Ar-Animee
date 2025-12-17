@@ -41,18 +41,20 @@ export const AnimeInfo = () => {
         return match ? parseFloat(match[0]) : 999999;
     };
 
-    // Updated Adsterra Code with correct Key
-    const SIDEBAR_AD_CODE = `
-      <script type="text/javascript">
-        atOptions = {
-          'key' : 'ff3fc835dbcf87ecc29dc319329a31cd',
-          'format' : 'iframe',
-          'height' : 250,
-          'width' : 300,
-          'params' : {}
-        };
-      </script>
-      <script type="text/javascript" src="https://www.highperformanceformat.com/ff3fc835dbcf87ecc29dc319329a31cd/invoke.js"></script>
+    // 728x90 Banner Code
+    const BANNER_AD_CODE = `
+      <div style="display: flex; justify-content: center; width: 100%;">
+        <script type="text/javascript">
+          atOptions = {
+            'key' : '8706818a620825176a0f202c52652284',
+            'format' : 'iframe',
+            'height' : 90,
+            'width' : 728,
+            'params' : {}
+          };
+        </script>
+        <script type="text/javascript" src="https://www.highperformanceformat.com/8706818a620825176a0f202c52652284/invoke.js"></script>
+      </div>
     `;
 
     // --- FETCH DATA ---
@@ -265,6 +267,8 @@ export const AnimeInfo = () => {
                 </div>
             </div>
 
+            <AdBanner type="custom" adCode={BANNER_AD_CODE} height="90px" />
+
             {/* === MAIN CONTENT === */}
             <div className="container mx-auto px-4 md:px-12 mt-8 md:mt-12">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
@@ -292,6 +296,8 @@ export const AnimeInfo = () => {
                                 أعمال مرتبطة
                             </button>
                         </div>
+                        
+                        {/* AD Removed from here */}
 
                         {/* --- EPISODES TAB --- */}
                         {activeTab === 'episodes' && (
@@ -475,8 +481,7 @@ export const AnimeInfo = () => {
                             </div>
                         </div>
 
-                        {/* Ad Banner Sidebar */}
-                        <AdBanner type="custom" adCode={SIDEBAR_AD_CODE} height="250px" />
+                        {/* Sidebar AD Removed */}
 
                         {/* Recommendations */}
                         <div className="bg-surface rounded-xl p-6 border border-white/5">
@@ -497,7 +502,11 @@ export const AnimeInfo = () => {
                              </div>
                         </div>
                     </div>
+                </div>
 
+                {/* Bottom Ad (End of Page) - 728x90 */}
+                <div className="mt-8">
+                     <AdBanner type="custom" adCode={BANNER_AD_CODE} height="90px" />
                 </div>
             </div>
         </div>

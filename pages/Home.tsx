@@ -162,41 +162,57 @@ export const Home = () => {
         {history.length > 0 && (activeCategory === 'الكل') && (
             <div className="animate-slide-up">
                  <Row title="تابع المشاهدة" items={history} isHistory={true} />
+                 <AdBanner type="custom" adCode={AD_CODE} height="90px" />
             </div>
         )}
 
         {(activeCategory === 'الكل' || activeCategory === 'رائج الآن') && (
             <div className="animate-slide-up">
                 <TopTenRow items={content.topTen} />
+                <AdBanner type="custom" adCode={AD_CODE} height="90px" />
             </div>
         )}
 
         {(activeCategory === 'الكل' || activeCategory === 'الموسم الحالي') && (
-            <Row title="الأكثر شعبية هذا الموسم" items={content.seasonal} />
+            <>
+                <Row title="الأكثر شعبية هذا الموسم" items={content.seasonal} />
+                <AdBanner type="custom" adCode={AD_CODE} height="90px" />
+            </>
         )}
         
-        <div className="py-2">
-            <AdBanner type="custom" adCode={AD_CODE} height="90px" />
-        </div>
-
         {(activeCategory === 'الكل' || activeCategory === 'أكشن') && content.action.length > 0 && (
+            <>
              <Row title="إثارة وأكشن" items={content.action} />
+             <AdBanner type="custom" adCode={AD_CODE} height="90px" />
+            </>
         )}
 
         {(activeCategory === 'الكل' || activeCategory === 'أفلام') && content.movies.length > 0 && (
+            <>
              <Row title="أفلام الانمي" items={content.movies} />
+             <AdBanner type="custom" adCode={AD_CODE} height="90px" />
+            </>
         )}
         
         {(activeCategory === 'الكل' || activeCategory === 'رائج الآن') && content.upcoming.length > 0 && (
-            <Row title="قادمة قريباً" items={content.upcoming} />
+            <>
+                <Row title="قادمة قريباً" items={content.upcoming} />
+                <AdBanner type="custom" adCode={AD_CODE} height="90px" />
+            </>
         )}
 
         {(activeCategory === 'الكل' || activeCategory === 'خيال علمي') && content.scifi.length > 0 && (
-            <Row title="خيال علمي ومستقبل" items={content.scifi} />
+            <>
+                <Row title="خيال علمي ومستقبل" items={content.scifi} />
+                <AdBanner type="custom" adCode={AD_CODE} height="90px" />
+            </>
         )}
 
         {(activeCategory === 'الكل' || activeCategory === 'رومانسي') && content.romance.length > 0 && (
-            <Row title="رومانسية ودراما" items={content.romance} />
+            <>
+                <Row title="رومانسية ودراما" items={content.romance} />
+                <AdBanner type="custom" adCode={AD_CODE} height="90px" />
+            </>
         )}
         
         {content.fantasy.length > 0 && (

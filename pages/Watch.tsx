@@ -72,7 +72,7 @@ export const Watch = () => {
       "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
   ];
 
-  // Updated Adsterra Code with correct Key
+  // Adsterra 300x250 (Sidebar)
   const ADSTERRA_SIDEBAR_CODE = `
     <script type="text/javascript">
       atOptions = {
@@ -84,6 +84,22 @@ export const Watch = () => {
       };
     </script>
     <script type="text/javascript" src="https://www.highperformanceformat.com/ff3fc835dbcf87ecc29dc319329a31cd/invoke.js"></script>
+  `;
+
+  // Adsterra 728x90 (Banner)
+  const BANNER_AD_CODE = `
+    <div style="display: flex; justify-content: center; width: 100%;">
+      <script type="text/javascript">
+        atOptions = {
+          'key' : '8706818a620825176a0f202c52652284',
+          'format' : 'iframe',
+          'height' : 90,
+          'width' : 728,
+          'params' : {}
+        };
+      </script>
+      <script type="text/javascript" src="https://www.highperformanceformat.com/8706818a620825176a0f202c52652284/invoke.js"></script>
+    </div>
   `;
 
   const getEpNumber = (ep: Episode): number => {
@@ -489,6 +505,8 @@ ${anime.title} - الحلقة ${displayEpisodeNum}
           </div>
       </div>
 
+      <AdBanner type="custom" adCode={BANNER_AD_CODE} height="90px" />
+
       <div className={`container mx-auto px-4 max-w-7xl py-8 transition-opacity duration-500 ${cinemaMode ? 'opacity-20 pointer-events-none' : 'opacity-100'}`}>
          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             <div className="lg:col-span-2 space-y-8">
@@ -515,6 +533,8 @@ ${anime.title} - الحلقة ${displayEpisodeNum}
                         </button>
                     </div>
                 </div>
+
+                <AdBanner type="custom" adCode={BANNER_AD_CODE} height="90px" />
 
                 <div className="bg-surface rounded-xl border border-white/5 overflow-hidden" ref={episodeListRef}>
                      <div className="flex border-b border-white/5">
