@@ -72,21 +72,18 @@ export const Watch = () => {
       "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
   ];
 
-  // ADSTERRA 300x250 Code for Unit ID: 28175857
-  // Note: If this doesn't load, replace the src URL with the exact one from your Adsterra dashboard
+  // Updated Adsterra Code with correct Key
   const ADSTERRA_SIDEBAR_CODE = `
-    <div id="adsterra-300-250">
-        <script type="text/javascript">
-            atOptions = {
-                'key' : '28175857', 
-                'format' : 'iframe',
-                'height' : 250,
-                'width' : 300,
-                'params' : {}
-            };
-        </script>
-        <script type="text/javascript" src="//www.highperformanceformat.com/28175857/invoke.js"></script>
-    </div>
+    <script type="text/javascript">
+      atOptions = {
+        'key' : 'ff3fc835dbcf87ecc29dc319329a31cd',
+        'format' : 'iframe',
+        'height' : 250,
+        'width' : 300,
+        'params' : {}
+      };
+    </script>
+    <script type="text/javascript" src="https://www.highperformanceformat.com/ff3fc835dbcf87ecc29dc319329a31cd/invoke.js"></script>
   `;
 
   const getEpNumber = (ep: Episode): number => {

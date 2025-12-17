@@ -41,20 +41,18 @@ export const AnimeInfo = () => {
         return match ? parseFloat(match[0]) : 999999;
     };
 
-    // ADSTERRA 300x250 Code for Unit ID: 28175857
+    // Updated Adsterra Code with correct Key
     const SIDEBAR_AD_CODE = `
-        <div id="adsterra-300-250-info">
-            <script type="text/javascript">
-                atOptions = {
-                    'key' : '28175857',
-                    'format' : 'iframe',
-                    'height' : 250,
-                    'width' : 300,
-                    'params' : {}
-                };
-            </script>
-            <script type="text/javascript" src="//www.highperformanceformat.com/28175857/invoke.js"></script>
-        </div>
+      <script type="text/javascript">
+        atOptions = {
+          'key' : 'ff3fc835dbcf87ecc29dc319329a31cd',
+          'format' : 'iframe',
+          'height' : 250,
+          'width' : 300,
+          'params' : {}
+        };
+      </script>
+      <script type="text/javascript" src="https://www.highperformanceformat.com/ff3fc835dbcf87ecc29dc319329a31cd/invoke.js"></script>
     `;
 
     // --- FETCH DATA ---
