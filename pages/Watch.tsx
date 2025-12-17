@@ -625,7 +625,7 @@ ${anime.title} - الحلقة ${displayEpisodeNum}
                      </div>
                 </div>
 
-                <AdBanner type="custom" adCode={ADSTERRA_SIDEBAR_CODE} />
+                <AdBanner type="custom" adCode={ADSTERRA_SIDEBAR_CODE} height="250px" />
             </div>
             
             <div className="space-y-6">

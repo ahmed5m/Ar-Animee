@@ -121,19 +121,19 @@ export const Home = () => {
       </button>
   );
 
-  // Updated with the working code provided by user, centered in a larger container
+  // 728x90 Banner Code
   const AD_CODE = `
     <div style="display: flex; justify-content: center; width: 100%;">
       <script type="text/javascript">
         atOptions = {
-          'key' : 'ff3fc835dbcf87ecc29dc319329a31cd',
+          'key' : '8706818a620825176a0f202c52652284',
           'format' : 'iframe',
-          'height' : 250,
-          'width' : 300,
+          'height' : 90,
+          'width' : 728,
           'params' : {}
         };
       </script>
-      <script type="text/javascript" src="https://www.highperformanceformat.com/ff3fc835dbcf87ecc29dc319329a31cd/invoke.js"></script>
+      <script type="text/javascript" src="https://www.highperformanceformat.com/8706818a620825176a0f202c52652284/invoke.js"></script>
     </div>
   `;
 
@@ -176,7 +176,7 @@ export const Home = () => {
         )}
         
         <div className="py-2">
-            <AdBanner type="custom" adCode={AD_CODE} />
+            <AdBanner type="custom" adCode={AD_CODE} height="90px" />
         </div>
 
         {(activeCategory === 'الكل' || activeCategory === 'أكشن') && content.action.length > 0 && (
@@ -231,7 +231,7 @@ export const Home = () => {
              </div>
         )}
         
-        <AdBanner type="custom" adCode={AD_CODE} />
+        <AdBanner type="custom" adCode={AD_CODE} height="90px" />
       </div>
     </div>
   );

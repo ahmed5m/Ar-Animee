@@ -14,6 +14,7 @@ interface AdBannerProps {
     // If using Adsterra or others (HTML/Script code)
     adCode?: string; 
     type?: 'adsense' | 'custom';
+    height?: string; // New prop for dynamic height
 }
 
 // REPLACE THIS WITH YOUR REAL PUBLISHER ID IF USING ADSENSE
@@ -24,7 +25,8 @@ export const AdBanner: React.FC<AdBannerProps> = ({
     dataAdFormat = 'auto', 
     dataFullWidthResponsive = true,
     adCode,
-    type = 'adsense' 
+    type = 'adsense',
+    height = '90px' // Default to banner height
 }) => {
     const [adError, setAdError] = useState(false);
     const adLoaded = useRef(false);
@@ -119,7 +121,7 @@ export const AdBanner: React.FC<AdBannerProps> = ({
                     ></ins>
                 </div>
             ) : type === 'custom' && adCode ? (
-                 <div ref={containerRef} className="w-full max-w-[728px] h-[90px] mx-auto bg-black/20 rounded overflow-hidden">
+                 <div ref={containerRef} style={{ height }} className="w-full max-w-[728px] mx-auto bg-black/20 rounded overflow-hidden">
                      {/* Custom Ad Injected Here */}
                  </div>
             ) : (

@@ -476,7 +476,7 @@ export const AnimeInfo = () => {
                         </div>
 
                         {/* Ad Banner Sidebar */}
-                        <AdBanner type="custom" adCode={SIDEBAR_AD_CODE} />
+                        <AdBanner type="custom" adCode={SIDEBAR_AD_CODE} height="250px" />
 
                         {/* Recommendations */}
                         <div className="bg-surface rounded-xl p-6 border border-white/5">
