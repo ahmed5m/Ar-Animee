@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { Anime, Comment, Episode, Relation } from '../types';
-import { fetchAnimeDetails, commentService, historyService, watchlistService, fetchAnimeRecommendations, fetchAnimeEpisodes, likeService, fetchAnimeRelations, fetchAnimeSeasons, SeasonInfo } from '../services/api';
+import { Anime, Episode, Relation } from '../types';
+import { fetchAnimeDetails, historyService, watchlistService, fetchAnimeRecommendations, fetchAnimeEpisodes, fetchAnimeRelations, fetchAnimeSeasons, SeasonInfo } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../context/NotificationContext';
-import { Play, Pause, ThumbsUp, MessageSquare, Send, Calendar, Star, Info, Share2, AlertCircle, Plus, Check, Loader2, Maximize, SkipForward, ArrowRight, Volume2, VolumeX, PlayCircle, Server, Globe, MonitorPlay, Settings, Captions, ChevronDown, Download, Lightbulb, LightbulbOff, Copy, Languages, ChevronLeft, Palette, Type, Box, List, FileText, Clapperboard, Search, ExternalLink } from 'lucide-react';
+import { Play, Pause, Calendar, Star, Info, Share2, AlertCircle, Plus, Check, Loader2, Maximize, SkipForward, ArrowRight, Volume2, VolumeX, PlayCircle, Server, Globe, MonitorPlay, Settings, Captions, ChevronDown, Download, Lightbulb, LightbulbOff, Copy, Languages, ChevronLeft, Palette, Type, Box, List, FileText, Clapperboard, Search, ExternalLink } from 'lucide-react';
 import { AdBanner } from '../components/AdBanner';
 
 export const Watch = () => {
@@ -13,14 +13,9 @@ export const Watch = () => {
   const navigate = useNavigate();
   
   const [anime, setAnime] = useState<Anime | null>(null);
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
   const [inWatchlist, setInWatchlist] = useState(false);
   
-  const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
-
   const [recommendations, setRecommendations] = useState<Anime[]>([]);
   const [episodes, setEpisodes] = useState<Episode[]>([]);
   const [seasons, setSeasons] = useState<SeasonInfo[]>([]);
@@ -32,7 +27,7 @@ export const Watch = () => {
   const [episodeQuery, setEpisodeQuery] = useState('');
   const ITEMS_PER_CHUNK = 100;
 
-  const [activeSideTab, setActiveSideTab] = useState<'episodes' | 'relations' | 'comments'>('episodes');
+  const [activeSideTab, setActiveSideTab] = useState<'episodes' | 'relations'>('episodes');
 
   // Player Config
   // Changed default to 'vidlink' for better stability
@@ -124,15 +119,10 @@ export const Watch = () => {
       try {
         currentDetails = await fetchAnimeDetails(id);
         setAnime(currentDetails);
-        setLikeCount(currentDetails.likes || 0);
 
-        if (user) {
-            const watchlistIds = await watchlistService.getWatchlistIds(user.id);
-            setInWatchlist(watchlistIds.includes(currentDetails.id));
-            
-            const liked = await likeService.isLiked(currentDetails.id, user.id);
-            setIsLiked(liked);
-        }
+        // Check watchlist (allows guest)
+        const watchlistIds = await watchlistService.getWatchlistIds(user?.id);
+        setInWatchlist(watchlistIds.includes(currentDetails.id));
 
         // Fetch Seasons
         if(currentDetails.type !== 'فيلم') {
@@ -153,15 +143,13 @@ export const Watch = () => {
 
       const results = await Promise.allSettled([
           fetchAnimeRecommendations(id),
-          commentService.getComments(id),
           fetchAnimeRelations(id)
       ]);
 
-      const [recsResult, commentsResult, relResult] = results;
+      const [recsResult, relResult] = results;
 
       if (recsResult.status === 'fulfilled') setRecommendations(recsResult.value);
       if (relResult.status === 'fulfilled') setRelations(relResult.value);
-      if (commentsResult.status === 'fulfilled') setComments(commentsResult.value);
     };
 
     load();
@@ -234,41 +222,15 @@ ${anime.title} - الحلقة ${displayEpisodeNum}
     return () => { URL.revokeObjectURL(url); };
   }, [anime, currentEpisodeIndex, subStyle]);
 
-  // ... (Comment handlers, etc. same as before) ...
-  const handlePostComment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) { showNotification('يرجى تسجيل الدخول للتعليق', 'error'); return; }
-    if (!id || !newComment.trim()) return;
-    try {
-      const added = await commentService.addComment(id, newComment, user);
-      setComments(prev => [added, ...prev]);
-      setNewComment('');
-      showNotification('تم نشر التعليق', 'success');
-    } catch (error) { showNotification('فشل نشر التعليق', 'error'); }
-  };
 
   const toggleWatchlist = async () => {
-    if (!user) { navigate('/login'); return; }
     if (!anime) return;
     const previousState = inWatchlist;
     setInWatchlist(!inWatchlist);
     try {
-        if (previousState) { await watchlistService.removeFromWatchlist(anime.id, user.id); showNotification('تم الحذف من قائمتي', 'info'); } 
-        else { await watchlistService.addToWatchlist(anime, user.id); showNotification('تمت الإضافة لقائمتي', 'success'); }
+        if (previousState) { await watchlistService.removeFromWatchlist(anime.id, user?.id); showNotification('تم الحذف من قائمتي', 'info'); } 
+        else { await watchlistService.addToWatchlist(anime, user?.id); showNotification('تمت الإضافة لقائمتي', 'success'); }
     } catch (error) { setInWatchlist(previousState); showNotification('فشل الإجراء', 'error'); }
-  };
-
-  const toggleLike = async () => {
-      if (!user) { showNotification('سجل الدخول للإعجاب', 'info'); return; }
-      if (!anime) return;
-      const wasLiked = isLiked;
-      setIsLiked(!isLiked);
-      setLikeCount(prev => isLiked ? prev - 1 : prev + 1);
-      try {
-        const result = await likeService.toggleLike(anime.id, user.id);
-        setLikeCount(result.count); 
-        if (!wasLiked) showNotification('تمت الإضافة للفيديوهات المعجب بها', 'success');
-      } catch (e) { setIsLiked(wasLiked); }
   };
 
   const handleShare = () => {
@@ -518,15 +480,11 @@ ${anime.title} - الحلقة ${displayEpisodeNum}
                         <div className="flex items-center gap-1"><Calendar size={16}/> {anime.releaseDate}</div>
                         <span className="w-1 h-1 bg-gray-600 rounded-full"></span>
                         <div className="border border-gray-600 px-2 rounded text-xs">HD</div>
-                        <div className="flex items-center gap-1 text-red-500 font-bold mr-auto"><ThumbsUp size={16} fill="currentColor"/> {likeCount.toLocaleString()} إعجاب</div>
                     </div>
                     
                     <div className="flex gap-4 flex-wrap">
                         <button onClick={toggleWatchlist} className={`flex items-center gap-2 px-6 py-2.5 rounded-full transition font-medium border ${inWatchlist ? 'bg-black text-green-400 border-green-500' : 'bg-surface hover:bg-gray-800 text-white border-transparent'}`}>
                             {inWatchlist ? <Check size={18} /> : <Plus size={18} />} {inWatchlist ? 'موجود بالقائمة' : 'أضف لقائمتي'}
-                        </button>
-                        <button onClick={toggleLike} className={`flex items-center gap-2 px-6 py-2.5 rounded-full transition font-medium border border-transparent ${isLiked ? 'text-primary bg-primary/10 border-primary/20' : 'bg-surface hover:bg-gray-800 text-white'}`}>
-                            <ThumbsUp size={18} fill={isLiked ? "currentColor" : "none"} /> {isLiked ? 'أعجبني' : 'إعجاب'}
                         </button>
                         <button onClick={handleShare} className="flex items-center gap-2 bg-surface hover:bg-gray-800 text-white px-6 py-2.5 rounded-full transition font-medium active:scale-95">
                             <Share2 size={18} /> مشاركة
@@ -549,12 +507,6 @@ ${anime.title} - الحلقة ${displayEpisodeNum}
                             className={`flex-1 py-4 text-center font-bold text-sm transition ${activeSideTab === 'relations' ? 'bg-white/10 text-white border-b-2 border-primary' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
                         >
                              <div className="flex items-center justify-center gap-2"><Clapperboard size={18}/> صلة</div>
-                        </button>
-                        <button 
-                            onClick={() => setActiveSideTab('comments')}
-                            className={`flex-1 py-4 text-center font-bold text-sm transition ${activeSideTab === 'comments' ? 'bg-white/10 text-white border-b-2 border-primary' : 'text-gray-400 hover:bg-white/5 hover:text-white'}`}
-                        >
-                            <div className="flex items-center justify-center gap-2"><MessageSquare size={18}/> التعليقات</div>
                         </button>
                      </div>
 
@@ -641,7 +593,35 @@ ${anime.title} - الحلقة ${displayEpisodeNum}
                                 )}
                             </>
                         )}
-                        {/* Comments logic assumed handled by tabs */}
+                        
+                        {activeSideTab === 'relations' && (
+                            <div className="animate-fade-in space-y-4">
+                                {relations.map((rel, idx) => (
+                                    <div key={idx} className="bg-surface p-5 rounded-lg border border-white/5">
+                                        <h3 className="text-primary font-bold mb-3 uppercase tracking-widest text-xs">{rel.relation}</h3>
+                                        <div className="space-y-3">
+                                            {rel.entry.map(entry => (
+                                                <Link 
+                                                    key={entry.mal_id} 
+                                                    to={entry.type === 'anime' ? `/anime/${entry.mal_id}` : '#'}
+                                                    className={`flex items-center gap-4 p-3 rounded bg-black/20 hover:bg-white/5 transition ${entry.type !== 'anime' ? 'opacity-50 pointer-events-none' : ''}`}
+                                                >
+                                                    <div className="w-10 h-10 bg-white/10 rounded flex items-center justify-center text-gray-400">
+                                                        {entry.type === 'anime' ? <Clapperboard size={18}/> : <Info size={18}/>}
+                                                    </div>
+                                                    <div>
+                                                        <div className="text-white font-bold text-sm">{entry.name}</div>
+                                                        <div className="text-gray-500 text-xs capitalize">{entry.type}</div>
+                                                    </div>
+                                                    {entry.type === 'anime' && <div className="mr-auto text-primary text-xs font-bold">عرض</div>}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ))}
+                                {relations.length === 0 && <div className="py-8 text-center text-gray-500">لا توجد أعمال مرتبطة.</div>}
+                            </div>
+                        )}
                      </div>
                 </div>
 

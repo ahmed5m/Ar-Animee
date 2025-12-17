@@ -11,7 +11,7 @@ export const Layout = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const { user, logout } = useAuth();
-  const { allNotifications, clearNotifications } = useNotification();
+  const { allNotifications, clearNotifications, unreadCount, markAllAsRead } = useNotification();
   const navigate = useNavigate();
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
@@ -79,6 +79,13 @@ export const Layout = () => {
       setSearchQuery('');
       setShowSuggestions(false);
       setMobileMenuOpen(false);
+  };
+
+  const handleNotificationClick = () => {
+      setShowNotifications(!showNotifications);
+      if (!showNotifications && unreadCount > 0) {
+          markAllAsRead();
+      }
   };
 
   const navLinks = [
@@ -172,12 +179,14 @@ export const Layout = () => {
 
             <div className="relative" ref={notificationRef}>
                 <button 
-                    onClick={() => setShowNotifications(!showNotifications)}
+                    onClick={handleNotificationClick}
                     className="text-gray-300 hover:text-white relative transition hover:scale-110 pt-1"
                 >
                     <Bell size={22} />
-                    {allNotifications.length > 0 && (
-                        <span className="absolute -top-1 -right-1 h-2.5 w-2.5 bg-primary rounded-full animate-pulse border border-black"></span>
+                    {unreadCount > 0 && (
+                        <span className="absolute -top-1.5 -right-1.5 h-4 w-4 bg-primary text-white text-[9px] font-bold flex items-center justify-center rounded-full border border-black animate-pulse">
+                            {unreadCount}
+                        </span>
                     )}
                 </button>
 
@@ -197,14 +206,22 @@ export const Layout = () => {
                                 </div>
                             ) : (
                                 allNotifications.map((n, i) => (
-                                    <div key={`${n.id}-${i}`} className="p-3 border-b border-white/5 hover:bg-white/5 transition flex gap-3">
+                                    <Link 
+                                        to={n.link || '#'} 
+                                        key={`${n.id}-${i}`} 
+                                        onClick={() => setShowNotifications(false)}
+                                        className={`block p-3 border-b border-white/5 hover:bg-white/5 transition flex gap-3 ${!n.read ? 'bg-white/5' : ''}`}
+                                    >
                                         <div className="mt-1 flex-shrink-0">
                                             {n.type === 'success' && <CheckCircle size={16} className="text-green-400" />}
                                             {n.type === 'error' && <AlertCircle size={16} className="text-red-400" />}
-                                            {n.type === 'info' && <Info size={16} className="text-blue-400" />}
+                                            {n.type === 'info' || n.type === 'update' && <Bell size={16} className="text-primary" />}
                                         </div>
-                                        <p className="text-sm text-gray-300 break-words">{n.message}</p>
-                                    </div>
+                                        <div>
+                                            <p className={`text-sm break-words ${!n.read ? 'text-white font-semibold' : 'text-gray-400'}`}>{n.message}</p>
+                                            <p className="text-[10px] text-gray-500 mt-1">{n.timestamp ? new Date(n.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</p>
+                                        </div>
+                                    </Link>
                                 ))
                             )}
                         </div>

@@ -13,26 +13,21 @@ export const MyList = () => {
 
     useEffect(() => {
         const fetchList = async () => {
-            if (user) {
-                const data = await watchlistService.getWatchlist(user.id);
-                setList(data);
-            } else {
-                setList([]);
-            }
+            // Allows guest access by passing undefined if user is null
+            const data = await watchlistService.getWatchlist(user?.id);
+            setList(data);
         }
         fetchList();
     }, [user]);
 
     const removeFromList = async (e: React.MouseEvent, id: string) => {
         e.preventDefault();
-        if (user) {
-            try {
-                await watchlistService.removeFromWatchlist(id, user.id);
-                setList(prev => prev.filter(item => item.id !== id));
-                showNotification('Removed from My List', 'info');
-            } catch (e) {
-                showNotification('Failed to remove', 'error');
-            }
+        try {
+            await watchlistService.removeFromWatchlist(id, user?.id);
+            setList(prev => prev.filter(item => item.id !== id));
+            showNotification('Removed from My List', 'info');
+        } catch (e) {
+            showNotification('Failed to remove', 'error');
         }
     };
 

@@ -79,12 +79,10 @@ export const AnimeInfo = () => {
                 const details = await fetchAnimeDetails(id);
                 setAnime(details);
 
-                // 2. Watchlist Status
-                if (user) {
-                    const ids = await watchlistService.getWatchlistIds(user.id);
-                    setInWatchlist(ids.includes(details.id));
-                }
-
+                // 2. Watchlist Status (Allow Guest)
+                const ids = await watchlistService.getWatchlistIds(user?.id);
+                setInWatchlist(ids.includes(details.id));
+                
                 // 3. Seasons Info
                 if (details.type !== 'فيلم') {
                     const seasonsData = await fetchAnimeSeasons(id);
@@ -129,10 +127,6 @@ export const AnimeInfo = () => {
 
     // --- ACTIONS ---
     const toggleWatchlist = async () => {
-        if (!user) {
-            navigate('/login');
-            return;
-        }
         if (!anime) return;
         
         const previousState = inWatchlist;
@@ -140,10 +134,10 @@ export const AnimeInfo = () => {
     
         try {
             if (previousState) {
-                await watchlistService.removeFromWatchlist(anime.id, user.id);
+                await watchlistService.removeFromWatchlist(anime.id, user?.id);
                 showNotification('تم الحذف من القائمة', 'info');
             } else {
-                await watchlistService.addToWatchlist(anime, user.id);
+                await watchlistService.addToWatchlist(anime, user?.id);
                 showNotification('تمت الإضافة للقائمة', 'success');
             }
         } catch (error) {
@@ -207,9 +201,13 @@ export const AnimeInfo = () => {
                         {/* Meta Tags */}
                         <div className="flex flex-wrap items-center gap-3 text-sm font-medium text-gray-300">
                              {anime.rating && (
-                                <span className="text-green-400 border border-green-500/30 bg-green-500/10 px-2 py-0.5 rounded flex items-center gap-1">
-                                    <Star size={14} fill="currentColor"/> {anime.rating}
-                                </span>
+                                <div className="flex items-center gap-3 bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10">
+                                    <Star size={16} className="text-yellow-500 fill-yellow-500"/>
+                                    <span className="text-white font-bold text-lg">{anime.rating}</span>
+                                    <div className="w-20 h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                                         <div className="h-full bg-yellow-500" style={{ width: `${(Number(anime.rating) / 10) * 100}%` }} />
+                                    </div>
+                                </div>
                              )}
                              <span>{anime.releaseDate?.split(' ')[0]}</span>
                              <span className="w-1 h-1 bg-gray-500 rounded-full"></span>
@@ -471,17 +469,24 @@ export const AnimeInfo = () => {
                                 <span className="text-white text-sm font-medium capitalize">{anime.season ? `${anime.season} ${anime.year || ''}` : 'غير محدد'}</span>
                             </div>
 
-                            <div className="flex justify-between items-center py-2 border-b border-white/5">
-                                <span className="text-gray-400 text-sm flex items-center gap-2"><Star size={16}/> التقييم</span>
-                                <span className="text-white text-sm font-medium">#{anime.rank || 'N/A'}</span>
-                            </div>
-                             <div className="flex justify-between items-center py-2 border-b border-white/5">
-                                <span className="text-gray-400 text-sm flex items-center gap-2"><Users size={16}/> الشعبية</span>
-                                <span className="text-white text-sm font-medium">#{anime.popularity || 'N/A'}</span>
+                            {/* Enhanced Visual Rating in Sidebar */}
+                            <div className="py-3 border-b border-white/5 space-y-2">
+                                <div className="flex justify-between items-center">
+                                    <span className="text-gray-400 text-sm flex items-center gap-2"><Star size={16}/> التقييم</span>
+                                    <span className="text-white text-sm font-medium">{anime.rating} <span className="text-xs text-gray-500">/ 10</span></span>
+                                </div>
+                                <div className="w-full h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
+                                    <div 
+                                        className="h-full bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-full" 
+                                        style={{ width: `${(Number(anime.rating) / 10) * 100}%` }}
+                                    ></div>
+                                </div>
+                                <div className="flex justify-between items-center text-xs text-gray-500 mt-1">
+                                    <span>الترتيب العالمي: #{anime.rank || 'N/A'}</span>
+                                    <span>الشعبية: #{anime.popularity || 'N/A'}</span>
+                                </div>
                             </div>
                         </div>
-
-                        {/* Sidebar AD Removed */}
 
                         {/* Recommendations */}
                         <div className="bg-surface rounded-xl p-6 border border-white/5">
