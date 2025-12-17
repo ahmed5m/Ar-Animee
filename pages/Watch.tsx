@@ -72,9 +72,20 @@ export const Watch = () => {
       "https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
   ];
 
+  // ADSTERRA 300x250 Code for Unit ID: 28175857
+  // Note: If this doesn't load, replace the src URL with the exact one from your Adsterra dashboard
   const ADSTERRA_SIDEBAR_CODE = `
-    <div style="width: 100%; height: 250px; display: flex; align-items: center; justify-content: center; background: #222; color: #777; font-family: 'Cairo', sans-serif;">
-        <span style="font-size: 12px;">إعلان جانبي</span>
+    <div id="adsterra-300-250">
+        <script type="text/javascript">
+            atOptions = {
+                'key' : '28175857', 
+                'format' : 'iframe',
+                'height' : 250,
+                'width' : 300,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/28175857/invoke.js"></script>
     </div>
   `;
 
@@ -351,11 +362,6 @@ ${anime.title} - الحلقة ${displayEpisodeNum}
             <div className={`aspect-video w-full bg-black relative overflow-hidden flex items-center justify-center shadow-2xl border-b border-white/10 ${cinemaMode ? 'fixed inset-0 z-50 h-screen w-screen' : ''}`}>
                  {activeServer !== 'private' && isPlaying && (
                      <div className="w-full h-full bg-black relative">
-                         {/* 
-                            IMPORTANT: No 'sandbox' attribute used here.
-                            'referrerPolicy="origin"' helps with some providers.
-                            'allow' grants necessary permissions for players to function.
-                         */}
                          <iframe 
                             key={`embed-${activeServer}-${selectedSeason}-${displayEpisodeNum}`}
                             src={getEmbedUrl()}
@@ -393,12 +399,10 @@ ${anime.title} - الحلقة ${displayEpisodeNum}
                         >
                              <track key={arabicSubtitleUrl} kind="subtitles" src={arabicSubtitleUrl} srcLang="ar" label="Arabic" default />
                         </video>
-                         {/* ... (Native Video Controls omitted for brevity, same as before) ... */}
                          <div className={`absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/60 transition-opacity duration-300 flex flex-col justify-between p-6 z-40 ${showControls || showSettingsMenu ? 'opacity-100' : 'opacity-0'}`}>
                             <div className="flex justify-between items-start">
                                 <button onClick={() => setIsPlaying(false)} className="text-white hover:bg-white/20 p-2 rounded-full transition"><ArrowRight size={28} /></button>
                             </div>
-                            {/* Simple controls fallback */}
                             <div className="flex items-center gap-4">
                                 <button onClick={togglePlay} className="text-white">{isPaused ? <Play size={32}/> : <Pause size={32}/>}</button>
                             </div>
@@ -426,8 +430,6 @@ ${anime.title} - الحلقة ${displayEpisodeNum}
             </div>
             
             <div className="bg-[#18181b] p-4 flex flex-col items-center justify-between gap-4 border-b border-white/5 shadow-lg relative z-20">
-                
-                {/* Server Selection & External Link Row */}
                 <div className="flex flex-wrap items-center justify-between w-full gap-4">
                     <div className="flex items-center gap-4 flex-wrap">
                         <div className="relative group/server z-30">
@@ -456,7 +458,6 @@ ${anime.title} - الحلقة ${displayEpisodeNum}
                             </div>
                         </div>
 
-                        {/* EXTERNAL LINK BUTTON - Fallback for Sandbox errors */}
                         {isPlaying && activeServer !== 'private' && (
                              <a 
                                 href={getEmbedUrl()} 
@@ -469,7 +470,6 @@ ${anime.title} - الحلقة ${displayEpisodeNum}
                              </a>
                         )}
                         
-                        {/* Error Hint */}
                         <div className="hidden md:flex items-center gap-1 text-xs text-yellow-500 bg-yellow-500/10 px-2 py-1 rounded border border-yellow-500/20">
                             <AlertCircle size={12}/>
                             <span>يواجهك خطأ؟ جرب سيرفر آخر أو المشاهدة الخارجية</span>
@@ -628,7 +628,7 @@ ${anime.title} - الحلقة ${displayEpisodeNum}
                      </div>
                 </div>
 
-                <AdBanner type="custom" adCode={ADSTERRA_SIDEBAR_CODE.replace('300x250', '728x90').replace('height: 250px', 'height: 90px')} />
+                <AdBanner type="custom" adCode={ADSTERRA_SIDEBAR_CODE} />
             </div>
             
             <div className="space-y-6">

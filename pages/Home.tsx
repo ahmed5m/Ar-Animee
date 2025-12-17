@@ -121,9 +121,11 @@ export const Home = () => {
       </button>
   );
 
+  // PLACEHOLDER FOR 728x90 BANNER
+  // Once you create the 728x90 unit in Adsterra, paste the code here inside the string.
   const AD_CODE = `
-    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #222; color: #555;">
-        <span style="font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: bold;">إعلان</span>
+    <div style="width: 100%; height: 90px; display: flex; align-items: center; justify-content: center; background: #222; color: #555;">
+        <span style="font-family: 'Cairo', sans-serif; font-size: 14px; font-weight: bold;">مساحة إعلانية 728x90 (قم بإضافة الكود هنا)</span>
     </div>
   `;
 

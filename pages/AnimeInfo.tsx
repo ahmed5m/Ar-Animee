@@ -41,6 +41,22 @@ export const AnimeInfo = () => {
         return match ? parseFloat(match[0]) : 999999;
     };
 
+    // ADSTERRA 300x250 Code for Unit ID: 28175857
+    const SIDEBAR_AD_CODE = `
+        <div id="adsterra-300-250-info">
+            <script type="text/javascript">
+                atOptions = {
+                    'key' : '28175857',
+                    'format' : 'iframe',
+                    'height' : 250,
+                    'width' : 300,
+                    'params' : {}
+                };
+            </script>
+            <script type="text/javascript" src="//www.highperformanceformat.com/28175857/invoke.js"></script>
+        </div>
+    `;
+
     // --- FETCH DATA ---
     useEffect(() => {
         if (!id) return;
@@ -147,11 +163,6 @@ export const AnimeInfo = () => {
         ? filteredEpisodes 
         : filteredEpisodes.slice(selectedChunk * ITEMS_PER_CHUNK, (selectedChunk + 1) * ITEMS_PER_CHUNK);
 
-    const SIDEBAR_AD_CODE = `
-        <div style="width: 100%; height: 250px; background: #222; display: flex; align-items: center; justify-content: center; color: #555;">
-            إعلان 300x250
-        </div>
-    `;
 
     if (loading && !anime) return <div className="h-screen flex items-center justify-center bg-background text-white"><Loader2 className="animate-spin mr-2"/> جاري التحميل...</div>;
     if (!anime) return <div className="h-screen flex items-center justify-center text-white bg-background">لم يتم العثور على الانمي</div>;
