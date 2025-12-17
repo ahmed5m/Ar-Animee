@@ -19,7 +19,6 @@ export const Layout = () => {
   const [suggestions, setSuggestions] = useState<Anime[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const searchContainerRef = useRef<HTMLDivElement>(null);
-  const notificationRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,9 +33,6 @@ export const Layout = () => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
         setShowSuggestions(false);
       }
-      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
-        setShowNotifications(false);
-      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
@@ -45,6 +41,7 @@ export const Layout = () => {
 
   useEffect(() => {
       setMobileMenuOpen(false);
+      setShowNotifications(false);
   }, [location]);
 
   useEffect(() => {
@@ -177,7 +174,7 @@ export const Layout = () => {
                 <Search size={22} />
             </button>
 
-            <div className="relative" ref={notificationRef}>
+            <div className="relative">
                 <button 
                     onClick={handleNotificationClick}
                     className="text-gray-300 hover:text-white relative transition hover:scale-110 pt-1"
@@ -190,42 +187,71 @@ export const Layout = () => {
                     )}
                 </button>
 
+                {/* Notifications Modal Center Display */}
                 {showNotifications && (
-                    <div className="absolute left-[-60px] md:left-0 top-full mt-4 w-72 md:w-80 bg-[#18181b] border border-white/10 rounded-xl shadow-2xl overflow-hidden z-50 animate-fade-in origin-top-left text-right">
-                        <div className="flex items-center justify-between p-3 border-b border-white/10 bg-black/40">
-                            <h3 className="text-sm font-bold text-white">الإشعارات</h3>
-                            {allNotifications.length > 0 && (
-                                <button onClick={clearNotifications} className="text-xs text-gray-400 hover:text-white">مسح الكل</button>
-                            )}
-                        </div>
-                        <div className="max-h-80 overflow-y-auto custom-scroll">
-                            {allNotifications.length === 0 ? (
-                                <div className="p-8 text-center text-gray-500 text-sm">
-                                    <Bell size={24} className="mx-auto mb-2 opacity-50"/>
-                                    لا توجد إشعارات جديدة
+                    <>
+                        {/* Backdrop Overlay */}
+                        <div 
+                            className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[60] animate-fade-in" 
+                            onClick={() => setShowNotifications(false)}
+                        />
+                        
+                        {/* Centered Modal Content */}
+                        <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md bg-[#18181b] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-[70] animate-slide-up text-right">
+                            <div className="flex items-center justify-between p-4 border-b border-white/10 bg-black/40">
+                                <h3 className="text-lg font-bold text-white">الإشعارات</h3>
+                                <div className="flex items-center gap-4">
+                                    {allNotifications.length > 0 && (
+                                        <button onClick={clearNotifications} className="text-sm text-gray-400 hover:text-white transition">مسح الكل</button>
+                                    )}
+                                    <button onClick={() => setShowNotifications(false)} className="text-gray-400 hover:text-white transition">
+                                        <X size={24} />
+                                    </button>
                                 </div>
-                            ) : (
-                                allNotifications.map((n, i) => (
-                                    <Link 
-                                        to={n.link || '#'} 
-                                        key={`${n.id}-${i}`} 
-                                        onClick={() => setShowNotifications(false)}
-                                        className={`block p-3 border-b border-white/5 hover:bg-white/5 transition flex gap-3 ${!n.read ? 'bg-white/5' : ''}`}
-                                    >
-                                        <div className="mt-1 flex-shrink-0">
-                                            {n.type === 'success' && <CheckCircle size={16} className="text-green-400" />}
-                                            {n.type === 'error' && <AlertCircle size={16} className="text-red-400" />}
-                                            {n.type === 'info' || n.type === 'update' && <Bell size={16} className="text-primary" />}
+                            </div>
+                            
+                            <div className="max-h-[60vh] overflow-y-auto custom-scroll">
+                                {allNotifications.length === 0 ? (
+                                    <div className="p-12 text-center text-gray-500">
+                                        <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <Bell size={32} className="opacity-30"/>
                                         </div>
-                                        <div>
-                                            <p className={`text-sm break-words ${!n.read ? 'text-white font-semibold' : 'text-gray-400'}`}>{n.message}</p>
-                                            <p className="text-[10px] text-gray-500 mt-1">{n.timestamp ? new Date(n.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</p>
-                                        </div>
-                                    </Link>
-                                ))
-                            )}
+                                        <p className="text-sm">لا توجد إشعارات جديدة</p>
+                                    </div>
+                                ) : (
+                                    <div className="divide-y divide-white/5">
+                                        {allNotifications.map((n, i) => (
+                                            <Link 
+                                                to={n.link || '#'} 
+                                                key={`${n.id}-${i}`} 
+                                                onClick={() => setShowNotifications(false)}
+                                                className={`flex gap-4 p-4 hover:bg-white/5 transition group ${!n.read ? 'bg-white/5 border-r-2 border-primary' : ''}`}
+                                            >
+                                                <div className="mt-1 flex-shrink-0">
+                                                    {n.type === 'success' && <CheckCircle size={20} className="text-green-400" />}
+                                                    {n.type === 'error' && <AlertCircle size={20} className="text-red-400" />}
+                                                    {(n.type === 'info' || n.type === 'update') && <Bell size={20} className="text-primary" />}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className={`text-sm md:text-base leading-snug break-words ${!n.read ? 'text-white font-bold' : 'text-gray-400'}`}>
+                                                        {n.message}
+                                                    </p>
+                                                    <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                                                        <Clock size={12}/>
+                                                        {n.timestamp ? new Date(n.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}
+                                                    </p>
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                            
+                            <div className="p-4 bg-black/20 border-t border-white/5 text-center">
+                                <button onClick={() => setShowNotifications(false)} className="text-gray-300 hover:text-white text-sm font-medium">إغلاق</button>
+                            </div>
                         </div>
-                    </div>
+                    </>
                 )}
             </div>
 
